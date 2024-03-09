@@ -7,4 +7,5 @@ P_FORET = 0.3
 P_PLAINE = 0.5
 
 # Définiion de la taille de la grille du terrain (une entrée 100 donne une grille en 100x100).
-TAILLE_TERRAIN = 100
+TAILLE_TERRAIN = 10
+
