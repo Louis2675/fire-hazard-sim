@@ -14,11 +14,6 @@ def evaluer_feu(case, I_EAU=I_EAU, I_FORET=I_FORET, I_MAISON=I_MAISON, I_PLAINE=
 
     Retourne:
     case : la case mise à jour après évaluation.
-
-    La fonction fonctionne comme suit:
-    - Si la case contient une maison (case[1] == 1), elle vérifie si l'intensité du feu a atteint le maximum pour une maison. Si c'est le cas, la maison brûle et l'état de la maison passe à "B" (brûlé) et l'intensité du feu diminue. Sinon, l'intensité du feu augmente.
-    - Si la case ne contient pas de maison, elle vérifie le type de terrain. Si le terrain est une plaine ("P") ou une forêt ("F"), elle vérifie si l'intensité du feu a atteint le maximum pour ce type de terrain. Si c'est le cas, le terrain brûle, l'état du terrain passe à "B" (brûlé) et l'intensité du feu diminue. Sinon, l'intensité du feu augmente.
-    - Si le terrain est de l'eau ("E"), la fonction ne fait rien car l'eau ne brûle jamais.
     """
     if case[1] == 1:  # Si la case contient une maison
         if case[2] == I_MAISON:  # Si l'intensité du feu a atteint le maximum pour une maison
@@ -37,6 +32,7 @@ def evaluer_feu(case, I_EAU=I_EAU, I_FORET=I_FORET, I_MAISON=I_MAISON, I_PLAINE=
             else:
                 case[2] = case[2] + 1  # Sinon, l'intensité du feu augmente
     # On saute le cas ou case[0] == "E" car l'eau ne brule jamais
+    # On saut le cas ou case[0] == "C" car une fois carbonisée, la case ne peut plus bruler
     return case  # Retourner la case mise à jour
         
 
