@@ -12,26 +12,33 @@ def generation_case(P_FORET=P_FORET, P_PLAINE=P_PLAINE, P_EAU=P_EAU):
     alea = random()
     # On compare ce nombre à la probabilité de présence de l'eau
     if alea < P_EAU:
-        return ["E", 0]
+        return ["E", 0, 0]
     # On compare ce nombre à la probabilité de présence de la forêt
     elif alea < P_EAU + P_FORET:
-        return ["F", 0]
+        return ["F", 0, 0]
     # Sinon, on retourne la plaine
     else:
-        return ["P", 0]
+        return ["P", 0, 0]
     
 
 def generer_maisons(terrain, P_MAISON=P_MAISON):
     """
-    Fonction qui génère des maisons sur le terrain
-    Entrée : terrain, le terrain sur lequel on veut générer des maisons et P_MAISON probabilité d'une maison
-    Sortie : terrain, le terrain avec les maisons générées
+    Cette fonction génère des maisons sur un terrain donné. 
+    Elle parcourt chaque cellule du terrain et, avec une probabilité P_MAISON, 
+    elle place une maison dans la cellule (en mettant la deuxième valeur de la cellule à 1).
+
+    Paramètres:
+    terrain : l'objet terrain sur lequel on veut générer des maisons
+    P_MAISON : la probabilité qu'une maison soit générée dans une cellule donnée
+
+    Retourne:
+    terrain : le terrain avec les maisons générées
     """
-    for ligne in range(terrain.taille):
-        for col in range(terrain.taille):
-            if random() < P_MAISON:
-                terrain.grille[ligne][col][1] = 1
-    return terrain
+    for ligne in range(terrain.taille):  # Parcourir chaque ligne du terrain
+        for col in range(terrain.taille):  # Parcourir chaque colonne du terrain
+            if random() < P_MAISON:  # Avec une probabilité P_MAISON
+                terrain.grille[ligne][col][1] = 1  # Placer une maison dans la cellule
+    return terrain  # Retourner le terrain avec les maisons générées
 
 
 def generation_terrain(P_FORET=P_FORET, P_PLAINE=P_PLAINE, P_EAU=P_EAU, TAILLE_TERRAIN=TAILLE_TERRAIN):
