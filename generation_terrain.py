@@ -1,6 +1,6 @@
 from random import random
 from parametres_terrain import P_EAU, P_PLAINE, P_FORET, P_MAISON, TAILLE_TERRAIN
-from terrain import Terrain, Parcelle
+from terrain import Terrain, Cell
 
 def generation_case(P_FORET=P_FORET, P_PLAINE=P_PLAINE, P_EAU=P_EAU):
     """
@@ -12,13 +12,13 @@ def generation_case(P_FORET=P_FORET, P_PLAINE=P_PLAINE, P_EAU=P_EAU):
     alea = random()
     # On compare ce nombre à la probabilité de présence de l'eau
     if alea < P_EAU:
-        return Parcelle("E", 0, 0)
+        return Cell("E", 0, 0)
     # On compare ce nombre à la probabilité de présence de la forêt
     elif alea < P_EAU + P_FORET:
-        return Parcelle("F", 0, 0)
+        return Cell("F", 0, 0)
     # Sinon, on retourne la plaine
     else:
-        return Parcelle("P", 0, 0)
+        return Cell("P", 0, 0)
 
 
 def generer_maisons(terrain, P_MAISON=P_MAISON):
@@ -34,25 +34,25 @@ def generer_maisons(terrain, P_MAISON=P_MAISON):
     Retourne:
     terrain : le terrain avec les maisons générées
     """
-    for ligne in range(terrain.taille):  # Parcourir chaque ligne du terrain
-        for col in range(terrain.taille):  # Parcourir chaque colonne du terrain
-            if random() < P_MAISON and terrain.grille[ligne][col].type_terrain != "E":  # Avec une probabilité P_MAISON
-                terrain.grille[ligne][col].est_maison = True  # Placer une maison dans la cellule
+    for line in range(terrain.size):  # Parcourir chaque line du terrain
+        for col in range(terrain.size):  # Parcourir chaque colonne du terrain
+            if random() < P_MAISON and terrain.grid[line][col].terrain_type != "E":  # Avec une probabilité P_MAISON
+                terrain.grid[line][col].is_house = True  # Placer une maison dans la cellule
     return terrain  # Retourner le terrain avec les maisons générées
 
 
 def generation_terrain(P_FORET=P_FORET, P_PLAINE=P_PLAINE, P_EAU=P_EAU, TAILLE_TERRAIN=TAILLE_TERRAIN):
     """
     Fonction qui génère un terrain aléatoire
-    Entrée : P_EAU, P_PLAINE, P_FORET; les probabilités de la présence de l'eau, de la plaine et de la forêt et la taille du terrain
+    Entrée : P_EAU, P_PLAINE, P_FORET; les probabilités de la présence de l'eau, de la plaine et de la forêt et la size du terrain
     Sortie : List, le terrain généré avec les biomes et les maisons
     """
     # On initialise un terrain vide
     terrain = Terrain(TAILLE_TERRAIN)
     # On change les cases du terrain avec la fonction generation_case
-    for ligne in range(TAILLE_TERRAIN):
+    for line in range(TAILLE_TERRAIN):
         for col in range(TAILLE_TERRAIN):
-            terrain.grille[ligne][col] = generation_case(P_FORET, P_PLAINE, P_EAU)
+            terrain.grid[line][col] = generation_case(P_FORET, P_PLAINE, P_EAU)
 
     terrain = generer_maisons(terrain)
     # On retourne le terrain avec les cases remplies
@@ -61,6 +61,6 @@ def generation_terrain(P_FORET=P_FORET, P_PLAINE=P_PLAINE, P_EAU=P_EAU, TAILLE_T
 
 if __name__ == "__main__":
     terrain = generation_terrain()
-    terrain.afficher_grille()
+    terrain.display_grid()
 
 
