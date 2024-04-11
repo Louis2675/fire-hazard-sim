@@ -9,6 +9,6 @@ P_PLAINE = 0.5
 # Probabilité qu'une maison apparisse sur le terrain
 P_MAISON = 0.1
 
-# Définiion de la size de la grid du terrain (une entrée 100 donne une grid en 100x100).
+# Definition of the size of the grid representing the terrain (An entry of 100 would create a grid of 100x100).
 TAILLE_TERRAIN = 10
 

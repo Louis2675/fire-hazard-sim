@@ -16,7 +16,7 @@ def update_fire(cell, S_FOREST=S_FOREST, S_HOUSE=S_HOUSE, S_PLAIN=S_PLAIN):
     Retourne:
     cell : la cell mise à jour après évaluation.
     """
-    if cell.terrain_type != "C": # To skip all the following lines if the cell is already burnt
+    if cell.terrain_type != "C" and cell.terrain_type != "W": # To skip all the following lines if the cell is already burnt
         if cell.terrain_type == "B": # For all burning cells
             cell.fire_strength = cell.fire_strength - 1
         else : # If it is not burning or charred, then it gains fire strength 
@@ -36,17 +36,29 @@ def update_fire(cell, S_FOREST=S_FOREST, S_HOUSE=S_HOUSE, S_PLAIN=S_PLAIN):
 
 
 def thunder(turn_count, S_THUNDER, terrain):
-    num_cells_terrain = terrain.size ** 2
-    num_cell = randint(0, 99)
-    cell_struck = terrain.grid[num_cell // 10][num_cell % 10] 
+    """
+    Function to make thunderstrikes, it takes the turn count, the probability of a thunderstrike and the terrain as arguments
+    """
+    num_cell_x = randint(0, terrain.size) # We take a random row between 0 and the number of row
+    num_cell_y = randint(0,terrain.size) # We take a random column between 0 and the number of columns
+
+    valid_cell_list = [] # We create a list for all of the valid cell (the ones that can be burnt)
+    for line in terrain.grid:
+        for cell in line:
+            if cell.terrain_type != "B" and cell.terrain_type != "W" and cell.terrain_type != "C":
+                valid_cell_list.append(cell)
+
+    cell_struck = valid_cell_list[randint(0, len(valid_cell_list))] # the cell is struck at random
     
-    if cell_struck.terrain_type != "W":
-        cell_struck.terrain_type = "B"
+    if cell_struck.terrain_type == "P":
+        cell_struck.fire_strength = S_PLAIN
+    elif cell_struck.terrain_type == "F":
+        cell_struck.fire_strength = S_FOREST
+    elif cell_struck.terrain_type == "H":
+        cell_struck.fire_strength = S_HOUSE
+    
+    cell_struck.terrain_type = "B"
         
-        if cell_struck.terrain_type == "H"
-        cell_struck.fire_strength = 
-        
-        if cell_struck
     
     
     
