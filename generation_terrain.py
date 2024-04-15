@@ -58,6 +58,11 @@ def generation_terrain(P_FORET=P_FORET, P_PLAINE=P_PLAINE, P_EAU=P_EAU, TAILLE_T
     # On retourne le terrain avec les cases remplies
     return terrain
 
+def harmonisation ():
+    """
+    A function that regroups the cells by type to make the terrain more balanced and better suited for the simulation
+    """
+    pass
 
 if __name__ == "__main__":
     terrain = generation_terrain()

@@ -25,6 +25,7 @@ class Terrain:
                 cell = self.grid[line][col]
                 
                 
+                
 if __name__ == '__main__':
     grid = Terrain(8) 
     grid.display_grid()
