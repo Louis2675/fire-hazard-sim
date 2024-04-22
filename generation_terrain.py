@@ -1,4 +1,4 @@
-from random import random
+import random
 from parametres_terrain import P_EAU, P_PLAINE, P_FORET, P_MAISON, TAILLE_TERRAIN
 from terrain import Terrain, Cell
 
@@ -12,7 +12,7 @@ def generation_case(P_FORET=P_FORET, P_PLAINE=P_PLAINE, P_EAU=P_EAU):
     alea = random()
     # On compare ce nombre à la probabilité de présence de l'eau
     if alea < P_EAU:
-        return Cell("E", 0, 0)
+        return Cell("W", 0, 0)
     # On compare ce nombre à la probabilité de présence de la forêt
     elif alea < P_EAU + P_FORET:
         return Cell("F", 0, 0)
@@ -36,36 +36,45 @@ def generer_maisons(terrain, P_MAISON=P_MAISON):
     """
     for line in range(terrain.size):  # Parcourir chaque line du terrain
         for col in range(terrain.size):  # Parcourir chaque colonne du terrain
-            if random() < P_MAISON and terrain.grid[line][col].terrain_type != "E":  # Avec une probabilité P_MAISON
+            if random() < P_MAISON and terrain.grid[line][col].terrain_type != "W":  # Avec une probabilité P_MAISON
                 terrain.grid[line][col].is_house = True  # Placer une maison dans la cellule
     return terrain  # Retourner le terrain avec les maisons générées
 
 
-def generation_terrain(P_FORET=P_FORET, P_PLAINE=P_PLAINE, P_EAU=P_EAU, TAILLE_TERRAIN=TAILLE_TERRAIN):
-    """
-    Fonction qui génère un terrain aléatoire
-    Entrée : P_EAU, P_PLAINE, P_FORET; les probabilités de la présence de l'eau, de la plaine et de la forêt et la size du terrain
-    Sortie : List, le terrain généré avec les biomes et les maisons
-    """
-    # On initialise un terrain vide
-    terrain = Terrain(TAILLE_TERRAIN)
-    # On change les cases du terrain avec la fonction generation_case
-    for line in range(TAILLE_TERRAIN):
-        for col in range(TAILLE_TERRAIN):
-            terrain.grid[line][col] = generation_case(P_FORET, P_PLAINE, P_EAU)
+def new_height_randomizer(height):
+    random_num = random.random()
+    if random_num <= 0.25:
+        if height != 0:
+            height = height-1
+    if 0.25 < random_num <= 0.5:
+        if height != 9:
+            height = height + 1
+    return height
 
-    terrain = generer_maisons(terrain)
-    # On retourne le terrain avec les cases remplies
+
+def generate_terrain_heights(terrain):
+    for line in range(terrain.size):
+        for col in range(terrain.size):
+            if col == line == 0:
+                terrain.grid[col][line].height = random.randint(0,9)
+            elif col == 0 :
+                new_height = new_height_randomizer(terrain.grid[line-1][col].height)
+                terrain.grid[col][line].height = new_height
+            elif line == 0:
+                new_height = new_height_randomizer(terrain.grid[line][col-1].height)
+                terrain.grid[col][line].height = new_height
+            else:
+                if random.random() > 0.5:
+                    new_height = new_height_randomizer(terrain.grid[line-1][col].height)
+                else:
+                    new_height = new_height_randomizer(terrain.grid[line][col-1].height)
+                terrain.grid[line][col].height = new_height
     return terrain
 
-def harmonisation ():
-    """
-    A function that regroups the cells by type to make the terrain more balanced and better suited for the simulation
-    """
-    pass
 
 if __name__ == "__main__":
-    terrain = generation_terrain()
+    terrain = Terrain(50)
+    terrain = generate_terrain_heights(terrain)
     terrain.display_grid()
 
 
