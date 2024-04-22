@@ -2,7 +2,7 @@
 Fichier contenant les fonctions liées à la propagation de l'incendie
 """
 
-from random import randint
+import random
 from parametres_incendie import S_FOREST, S_HOUSE, S_PLAIN
 
 def update_fire(cell, S_FOREST=S_FOREST, S_HOUSE=S_HOUSE, S_PLAIN=S_PLAIN):
@@ -39,28 +39,25 @@ def thunder(turn_count, S_THUNDER, terrain):
     """
     Function to make thunderstrikes, it takes the turn count, the probability of a thunderstrike and the terrain as arguments
     """
-    num_cell_x = randint(0, terrain.size) # We take a random row between 0 and the number of row
-    num_cell_y = randint(0,terrain.size) # We take a random column between 0 and the number of columns
 
-    valid_cell_list = [] # We create a list for all of the valid cell (the ones that can be burnt)
-    for line in terrain.grid:
-        for cell in line:
-            if cell.terrain_type != "B" and cell.terrain_type != "W" and cell.terrain_type != "C":
-                valid_cell_list.append(cell)
+    if turn_count % 10 == 0 : # Every 10 turns
+        
+        chance = random.random
+        if chance < S_THUNDER : # the chance of a thunderstrike
+            valid_cell_list = [] # We create a list for all of the valid cell (the ones that can be burnt)
+            for line in terrain.grid:
+                for cell in line:
+                    if cell.terrain_type != "B" and cell.terrain_type != "W" and cell.terrain_type != "C":
+                        valid_cell_list.append(cell)
 
-    cell_struck = valid_cell_list[randint(0, len(valid_cell_list))] # the cell is struck at random
-    
-    if cell_struck.terrain_type == "P":
-        cell_struck.fire_strength = S_PLAIN
-    elif cell_struck.terrain_type == "F":
-        cell_struck.fire_strength = S_FOREST
-    elif cell_struck.terrain_type == "H":
-        cell_struck.fire_strength = S_HOUSE
-    
-    cell_struck.terrain_type = "B"
-        
-    
-    
-    
-        
+            cell_struck = valid_cell_list[random.randint(0, len(valid_cell_list))] # the cell is struck at random
+            
+            if cell_struck.terrain_type == "P":
+                cell_struck.fire_strength = S_PLAIN
+            elif cell_struck.terrain_type == "F":
+                cell_struck.fire_strength = S_FOREST
+            elif cell_struck.terrain_type == "H":
+                cell_struck.fire_strength = S_HOUSE
+            
+            cell_struck.terrain_type = "B"
 
