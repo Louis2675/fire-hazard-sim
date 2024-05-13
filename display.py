@@ -60,7 +60,11 @@ if __name__ == "__main__":
         #    The grid is displayed by looking at the cell's type and showing a particular color for this type of cell
         for line in range (terrain.size):
             for col in range (terrain.size):
-                if terrain.grid[line][col].terrain_type == 'F':
+
+                if terrain.grid[line][col].burning == True :
+                    pygame.draw.rect(window, colorB, pygame.Rect(marge//2 + col*(taille_grille//terrain.size), marge//2 + line*(taille_grille//terrain.size), taille_grille//terrain.size, taille_grille//terrain.size))
+                
+                elif terrain.grid[line][col].terrain_type == 'F':
                     pygame.draw.rect(window, colorF, pygame.Rect(marge//2 + col*(taille_grille//terrain.size), marge//2 + line*(taille_grille//terrain.size), taille_grille//terrain.size, taille_grille//terrain.size))
                 
                 elif terrain.grid[line][col].terrain_type == 'W':
@@ -71,9 +75,6 @@ if __name__ == "__main__":
                 
                 elif terrain.grid[line][col].terrain_type == 'H':
                     pygame.draw.rect(window, colorH, pygame.Rect(marge//2 + col*(taille_grille//terrain.size), marge//2 + line*(taille_grille//terrain.size), taille_grille//terrain.size, taille_grille//terrain.size))
-                
-                elif terrain.grid[line][col].terrain_type == 'B':
-                    pygame.draw.rect(window, colorB, pygame.Rect(marge//2 + col*(taille_grille//terrain.size), marge//2 + line*(taille_grille//terrain.size), taille_grille//terrain.size, taille_grille//terrain.size))
                 
                 elif terrain.grid[line][col].terrain_type == 'C':
                     pygame.draw.rect(window, colorC, pygame.Rect(marge//2 + col*(taille_grille//terrain.size), marge//2 + line*(taille_grille//terrain.size), taille_grille//terrain.size, taille_grille//terrain.size))

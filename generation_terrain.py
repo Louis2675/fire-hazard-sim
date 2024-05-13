@@ -1,5 +1,6 @@
 import random
-from parametres_terrain import P_PLAIN, P_FOREST, P_HOUSE, TERRAIN_SIZE, WATER_HEIGHT
+import copy
+from parametres_terrain import P_PLAIN, P_FOREST, P_HOUSE, TERRAIN_SIZE, P_WATER
 from terrain import Terrain, Cell
 
 def cell_generator(terrain):
@@ -13,15 +14,13 @@ def cell_generator(terrain):
             # We take a number between 0 and 1
             alea = random.random()
             # We check if the number is under the probability for a forest
-            if alea < P_FOREST:
-                terrain.grid[line][col].terrain_type = 'F'
-            # Same for a plain
-            else:
-                terrain.grid[line][col].terrain_type = 'P'
-            
-            # Now we check for the height of the cells and give the water type for the ones below the water height
-            if terrain.grid[line][col].height <= WATER_HEIGHT:
+            if alea < P_WATER:
                 terrain.grid[line][col].terrain_type = 'W'
+            # Same for a plain
+            elif alea < 0.42:
+                terrain.grid[line][col].terrain_type = 'P'
+            else :
+                terrain.grid[line][col].terrain_type = 'F'
     return terrain
 
 
@@ -72,43 +71,81 @@ def generate_heights(terrain):
                 terrain.grid[line][col].height = (height1 + height2) // 2
     return terrain
 
-
 def change_cell (terrain, copie, x, y):
     """
     Function that counts the number of each neighbour and give our cell the type of the most numerous neighbour
     """
-    if x != 0 and y != 0 and x != terrain.size and y != terrain.size : # We make sur the cell is not bordering a side
-        if terrain.grid[x][y].terrain_type != 'H':
-            nb_F = 0
-            nb_P = 0
-            nb_W = 0
-            for i in [-1,0,1]:
-                for j in [-1,0,1]:
-                    if not(i == j == 0):
-                        if copie.grid[x + i][y + j].terrain_type == 'P':
-                            nb_P += 1
-                        elif terrain.grid[x + i][y + j].terrain_type == 'F':
-                            nb_F += 1
-                        else :
-                            nb_W += 1
-            
-            if nb_P >= nb_F:
-                if nb_P >= nb_W:
+    nb_F = 0
+    nb_P = 0
+    nb_W = 0
+    if x != terrain.size - 1 and y != terrain.size - 1 : # We make sur the cell is not bordering a side
+        for i in [-1,0,1]:
+            for j in [-1,0,1]:
+                if not(i == j == 0):
+                    if copie.grid[x + i + 0 ** x][y + j + 0 ** y].terrain_type == 'P':
+                        nb_P += 1
+                    elif copie.grid[x + i + 0 ** x][y + j + 0 ** y].terrain_type == 'F':
+                        nb_F += 1
+                    else :
+                        nb_W += 1
+    elif x == terrain.size - 1:
+        for i in [-1, 0]:
+            if y == terrain.size - 1:
+                for j in [-1, 0]:
+                    if copie.grid[x + i][y + j].terrain_type == 'P':
+                        nb_P += 1
+                    elif copie.grid[x + i][y + j].terrain_type == 'F':
+                        nb_F += 1
+                    else :
+                        nb_W += 1
+            else :
+                for j in [-1, 0, 1]:
+                    if copie.grid[x + i][y + j].terrain_type == 'P':
+                        nb_P += 1
+                    elif copie.grid[x + i][y + j].terrain_type == 'F':
+                        nb_F += 1
+                    else :
+                        nb_W += 1
+    else :
+        for i in [-1, 0, 1]:
+            if y == terrain.size - 1:
+                for j in [-1, 0]:
+                    if copie.grid[x + i][y + j].terrain_type == 'P':
+                        nb_P += 1
+                    elif copie.grid[x + i][y + j].terrain_type == 'F':
+                        nb_F += 1
+                    else :
+                        nb_W += 1
+            else :
+                for j in [-1, 0, 1]:
+                    if copie.grid[x + i][y + j].terrain_type == 'P':
+                        nb_P += 1
+                    elif copie.grid[x + i][y + j].terrain_type == 'F':
+                        nb_F += 1
+                    else :
+                        nb_W += 1
+
+    if terrain.grid[x][y].terrain_type != 'H':
+        if nb_F > 5 :
+            terrain.grid[x][y].terrain_type = 'F'
+        elif nb_P > 4 :
+            terrain.grid[x][y].terrain_type = 'P'
+        elif nb_W > 2:
+            terrain.grid[x][y].terrain_type = 'W'
+        else :
+            if terrain.grid[x][y].terrain_type == 'W':
+                random_nb = random.random()
+                if random_nb < 0.6:
                     terrain.grid[x][y].terrain_type = 'P'
                 else :
-                    terrain.grid[x][y].terrain_type = 'W'
-            elif nb_F >= nb_W:
-                terrain.grid[x][y].terrain_type = 'F'
-            else :
-                terrain.grid[x][y].terrain_type = 'W'
+                    terrain.grid[x][y].terrain_type = 'F'
 
 
 def harmonization (terrain):
-    copie = terrain.copie()
-    for _ in range (1): # We do 10 turns of harminixing the terrain
-        
-        for line in range (terrain.size - 1):
-            for col in range (terrain.size - 1):
+    for _ in range (16): # We do 10 turns of harminizing the terrain
+        copie = copy.deepcopy(terrain)
+        for line in range (terrain.size):
+            for col in range (terrain.size):
                 change_cell(terrain, copie, line, col)
     
     return terrain
@@ -116,9 +153,15 @@ def harmonization (terrain):
 
 def generate_terrain ():
     terrain = Terrain(TERRAIN_SIZE)
-    return harmonization(generate_houses(cell_generator(generate_heights(terrain))))
+    return generate_houses(harmonization(cell_generator(terrain)))
 
 if __name__ == "__main__":
     terrain = generate_terrain()
     terrain.display_grid()
 
+"""
+# Now we check for the height of the cells and give the water type for the ones below the water height
+            if terrain.grid[line][col].height <= WATER_HEIGHT:
+                terrain.grid[line][col].terrain_type = 'W'
+generate_heights()
+"""

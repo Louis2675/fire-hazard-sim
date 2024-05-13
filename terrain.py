@@ -3,26 +3,22 @@ Fichier contenant la classe grid définissant une grid de jeu.
 """
 
 class Cell:
-    def __init__(self, terrain_type, fire_strength, height):
+    def __init__(self, terrain_type, fire_strength, height, x, y):
         self.terrain_type = terrain_type
         self.fire_strength = fire_strength
         self.height = height
+        self.burning = False
+        self.coors = (x, y)
 
 
 class Terrain:
     def __init__ (self, size):
         self.size = size
         self.grid = []
-        for i in range (size):
+        for line in range (size):
             self.grid.append([])
-            for _ in range (size) : 
-                self.grid[i].append(Cell("None", 0, 0))
-    
-    def copie (self, patron):
-        for line in range (self.size):
-            for col in range (self.size):
-                self.grid[line][col] = (self.grid[line][col])
-        return 0
+            for col in range (size) : 
+                self.grid[line].append(Cell("None", 0, 0, line, col))
 
     
     # Inutile
