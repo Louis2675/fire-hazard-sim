@@ -18,6 +18,13 @@ class Terrain:
             for _ in range (size) : 
                 self.grid[i].append(Cell("None", 0, 0))
     
+    def copie (self, patron):
+        for line in range (self.size):
+            for col in range (self.size):
+                self.grid[line][col] = (self.grid[line][col])
+        return 0
+
+    
     # Inutile
     def display_grid(self):
         for line in range(self.size):

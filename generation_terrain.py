@@ -72,23 +72,51 @@ def generate_heights(terrain):
                 terrain.grid[line][col].height = (height1 + height2) // 2
     return terrain
 
-def change_cell (terrain, x, y):
+
+def change_cell (terrain, copie, x, y):
     """
     Function that counts the number of each neighbour and give our cell the type of the most numerous neighbour
     """
-    if x != 0 and col != 0 and line != terrain.size and col != terrain.size : # We make sur the cell is not bordering a side
+    if x != 0 and y != 0 and x != terrain.size and y != terrain.size : # We make sur the cell is not bordering a side
+        if terrain.grid[x][y].terrain_type != 'H':
+            nb_F = 0
+            nb_P = 0
+            nb_W = 0
+            for i in [-1,0,1]:
+                for j in [-1,0,1]:
+                    if not(i == j == 0):
+                        if copie.grid[x + i][y + j].terrain_type == 'P':
+                            nb_P += 1
+                        elif terrain.grid[x + i][y + j].terrain_type == 'F':
+                            nb_F += 1
+                        else :
+                            nb_W += 1
+            
+            if nb_P >= nb_F:
+                if nb_P >= nb_W:
+                    terrain.grid[x][y].terrain_type = 'P'
+                else :
+                    terrain.grid[x][y].terrain_type = 'W'
+            elif nb_F >= nb_W:
+                terrain.grid[x][y].terrain_type = 'F'
+            else :
+                terrain.grid[x][y].terrain_type = 'W'
+
 
 def harmonization (terrain):
-    for _ in range (10): # We do 10 turns of harminixing the terrain
+    copie = terrain.copie()
+    for _ in range (1): # We do 10 turns of harminixing the terrain
         
-        for line in range (terrain.size):
-            for col in range (terrain.size):
-                change_cell(terrain, line, col)
+        for line in range (terrain.size - 1):
+            for col in range (terrain.size - 1):
+                change_cell(terrain, copie, line, col)
+    
+    return terrain
 
 
 def generate_terrain ():
     terrain = Terrain(TERRAIN_SIZE)
-    return generate_houses(cell_generator(generate_heights(terrain)))
+    return harmonization(generate_houses(cell_generator(generate_heights(terrain))))
 
 if __name__ == "__main__":
     terrain = generate_terrain()
