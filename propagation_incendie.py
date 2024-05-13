@@ -3,7 +3,7 @@ Fichier contenant les fonctions liées à la propagation de l'incendie
 """
 
 import random
-from parametres_incendie import S_FOREST, S_HOUSE, S_PLAIN
+from parametres_incendie import S_WATER, S_FOREST, S_HOUSE, S_PLAIN
 
 def update_fire(cell, S_FOREST=S_FOREST, S_HOUSE=S_HOUSE, S_PLAIN=S_PLAIN):
     """
@@ -61,3 +61,35 @@ def thunder(turn_count, S_THUNDER, terrain):
             
             cell_struck.terrain_type = "B"
 
+
+def calculate_distance_factor(cell1, cell2):
+    x1, y1 = cell1.coordinates
+    x2, y2 = cell2.coordinates
+    
+    distance_squared = (x1 - x2) ** 2 + (y1 - y2) ** 2
+    
+    if distance_squared == 1:
+        return 25
+    elif distance_squared == 2:
+        return 75
+    else:
+        assert False, "Les cellules ne sont ni diagonales ni voisines."
+
+
+def calculate_propagation_chance(cell, cell2, S_WATER, S_FOREST, S_HOUSE, S_PLAIN):
+    if cell.terrain_type == "W":
+        s_max = S_WATER
+    elif cell.terrain_type == "F":
+        s_max = S_FOREST
+    elif cell.terrain_type == "H":
+        s_max = S_HOUSE
+    elif cell.terrain_type == "P":
+        s_max = S_PLAIN
+    dist = calculate_distance_factor(cell, cell2)
+    if cell2.terrain_type == "H" or cell2.terrain_type == "P":
+        terrain_type_fact = 0.5
+    if cell2.terrain_type == "F":
+        terrain_type_fact = 1
+    else:
+        terrain_type_fact = 0
+    return dist * terrain_type_fact * (0,75) ** (s_max-cell2.fire_strength)
