@@ -11,7 +11,7 @@ S_FOREST = 4
 S_HOUSE = 8
 
 # Probabilités des évenements spéciaux
-S_THUNDER = 0.8
+P_THUNDER = 0.8
 
 
 
