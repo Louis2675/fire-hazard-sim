@@ -76,7 +76,7 @@ def calculate_distance_factor(cell1, cell2):
         assert False, "Les cellules ne sont ni diagonales ni voisines."
 
 
-def calculate_propagation_chance(cell, cell2, S_WATER, S_FOREST, S_HOUSE, S_PLAIN):
+def calculate_propagation_chance(cell, cell2, S_WATER=S_WATER, S_FOREST=S_FOREST, S_HOUSE=S_HOUSE, S_PLAIN=S_PLAIN):
     if cell.terrain_type == "W":
         s_max = S_WATER
     elif cell.terrain_type == "F":
@@ -93,3 +93,21 @@ def calculate_propagation_chance(cell, cell2, S_WATER, S_FOREST, S_HOUSE, S_PLAI
     else:
         terrain_type_fact = 0
     return dist * terrain_type_fact * (0,75) ** (s_max-cell2.fire_strength)
+
+
+def cell_total_propagation_chance(terrain, cell):
+    total_chance = 0
+    x, y = cell.coordinates
+    
+    for i in range(max(0, x - 1), min(terrain.size, x + 2)):
+        for j in range(max(0, y - 1), min(terrain.size, y + 2)):
+            if i == x and j == y:
+                continue  # Skip the cell itself
+            total_chance += calculate_propagation_chance(cell, terrain.grid[i][j])
+                
+    return total_chance
+
+def will_cell_burn(terrain, cell):
+    if random.random * 100 >= cell_total_propagation_chance(terrain,cell):
+        return True
+    return False
