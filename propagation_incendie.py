@@ -16,7 +16,7 @@ def update_fire(cell, S_FOREST=S_FOREST, S_HOUSE=S_HOUSE, S_PLAIN=S_PLAIN):
     Retourne:
     cell : la cell mise à jour après évaluation.
     """
-    if cell.terrain_type != "C" and cell.terrain_type != "W": # To skip all the following lines if the cell is already burnt
+    if cell.terrain_type != "C" and cell.terrain_type != "W": # To skip all the following lines if the cell is already carbonized or water
         if cell.terrain_type == "B": # For all burning cells
             cell.fire_strength = cell.fire_strength - 1
         else : # If it is not burning or charred, then it gains fire strength 
@@ -60,6 +60,14 @@ def thunder(turn_count, S_THUNDER, terrain):
                 cell_struck.fire_strength = S_HOUSE
             
             cell_struck.terrain_type = "B"
+
+
+def rain():
+    pass
+
+
+def wind():
+    pass
 
 
 def calculate_distance_factor(cell1, cell2):
@@ -111,3 +119,21 @@ def will_cell_burn(terrain, cell):
     if random.random * 100 >= cell_total_propagation_chance(terrain,cell):
         return True
     return False
+
+
+def propagate_fire(terrain):
+    for i in range(terrain.size):
+        for j in range(terrain.size):
+            if will_cell_burn(terrain, terrain.grid[i][j]):
+                terrain.grid[i][j].terrain_type = "B"
+                terrain.grid[i][j].fire_strength = 1
+
+
+def simulation_step(terrain, turn_count, S_THUNDER):
+    for line in terrain.grid:
+        for cell in line:
+            update_fire(cell)
+    thunder(turn_count, S_THUNDER, terrain)
+    propagate_fire(terrain)
+    turn_count = turn_count + 1
+    return turn_count
