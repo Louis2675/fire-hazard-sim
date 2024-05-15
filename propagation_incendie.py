@@ -3,7 +3,7 @@ Fichier contenant les fonctions liées à la propagation de l'incendie
 """
 
 import random
-from parametres_incendie import S_WATER, S_FOREST, S_HOUSE, S_PLAIN, P_THUNDER
+from parametres_incendie import S_FOREST, S_HOUSE, S_PLAIN, P_THUNDER, RAIN_INTENSITY
 
 def set_fire (terrain, coor):
     """
@@ -33,7 +33,6 @@ def update_fire(cell):
                 elif cell.fire_strength >= S_HOUSE and cell.terrain_type == 'H':
                     cell.dying = True
 
-
 def thunder(turn_count, terrain):
     """
     Function to make thunderstrikes, it takes the turn count, the probability of a thunderstrike and the terrain as arguments
@@ -62,13 +61,8 @@ def thunder(turn_count, terrain):
                 cell_struck.burning = True
 
 
-def rain():
-    pass
-
-
 def wind():
     pass
-
 
 def calculate_distance_factor(cell1, cell2):
     coor1 = cell1.coors
@@ -85,8 +79,7 @@ def calculate_distance_factor(cell1, cell2):
     else:
         assert False, "Les cellules ne sont ni diagonales ni voisines."
 
-
-def calculate_propagation_chance(cell, cell2):
+def calculate_propagation_chance(cell, cell2, rain, wind):
     if cell.terrain_type == "F":
         s_max = S_FOREST
     elif cell.terrain_type == "H":
@@ -103,10 +96,12 @@ def calculate_propagation_chance(cell, cell2):
             terrain_type_fact = 0
     else:
         terrain_type_fact = 0
+    
+    if rain == True:
+        return dist * terrain_type_fact * (0.75) ** (s_max - cell2.fire_strength) * RAIN_INTENSITY
     return dist * terrain_type_fact * (0.75) ** (s_max - cell2.fire_strength)
 
-
-def cell_total_propagation_chance(terrain, cell):
+def cell_total_propagation_chance(terrain, cell, rain, wind):
     total_chance = 0
     coor = cell.coors
     
@@ -114,28 +109,26 @@ def cell_total_propagation_chance(terrain, cell):
         for j in range(max(0, coor[1] - 1), min(terrain.size, coor[1] + 2)):
             if i == coor[0] and j == coor[1]:
                 continue  # Skip the cell itself
-            total_chance += calculate_propagation_chance(cell, terrain.grid[i][j])
+            total_chance += calculate_propagation_chance(cell, terrain.grid[i][j], rain, wind)
                 
     return total_chance
 
-def will_cell_burn(terrain, cell):
+def will_cell_burn(terrain, cell, rain, wind):
     if cell.terrain_type != 'W' and cell.terrain_type != 'C':
         random_nb = random.randint(1, 100)
-        if random_nb <= cell_total_propagation_chance(terrain,cell):
+        if random_nb <= cell_total_propagation_chance(terrain,cell, rain, wind):
             return True
     return False
 
-
-def propagate_fire(terrain):
+def propagate_fire(terrain, rain, wind):
     for i in range(terrain.size):
         for j in range(terrain.size):
-            if will_cell_burn(terrain, terrain.grid[i][j]):
+            if will_cell_burn(terrain, terrain.grid[i][j], rain, wind):
                 terrain.grid[i][j].burning = True
 
-
-def simulation_step(terrain, turn_count):
+def simulation_step(terrain, turn_count, rain, wind):
     for line in terrain.grid:
         for cell in line:
             update_fire(cell)
     thunder(turn_count, terrain)
-    propagate_fire(terrain)
+    propagate_fire(terrain, rain, wind)

@@ -1,7 +1,35 @@
 import pygame
 import generation_terrain
 import propagation_incendie
+import random
 from parametres_terrain import TERRAIN_SIZE
+from parametres_incendie import P_RAIN, T_RAIN, P_WIND, T_WIND
+
+def calculate_rain(rain, time_rain):
+    """
+    Function to know if it is raining or not
+    """
+    nb_rand = random.random()
+    if nb_rand <= P_RAIN and rain == False:
+        rain = True
+        time_rain = T_RAIN
+    elif rain == True:
+        if time_rain == 0:
+            rain = False
+        else :
+            time_rain -= 1
+    return rain, time_rain
+
+def wind (direction, values, time):
+    rand = random.random()
+    if rand <= P_WIND and time == 0:
+        nb_rand = random.randint(0,4)
+        time = T_WIND
+        return values[nb_rand], time
+    elif time > 0 :
+        return direction, time -1
+    else :
+        return direction, time
 
 if __name__ == "__main__":
     # We start by initialising everything we need
@@ -24,6 +52,13 @@ if __name__ == "__main__":
     running  = True # To start pygame
 
     color = (255,255,255) # Color of the backgrund
+
+    rain = False
+    time_rain = 0
+    
+    wind_values = ['n','l', 'u', 'r', 'd'] # the values are none, left, up, right, down
+    wind_direction = wind_values[0]
+    time_wind = 0
 
     """
 
@@ -107,5 +142,9 @@ if __name__ == "__main__":
 
         pygame.time.wait(100) # We wait a bit until the next step
 
-        propagation_incendie.simulation_step(terrain, turn_count)
-    
+        rain, time_rain = calculate_rain(rain, time_rain)
+
+        wind_direction, time_wind = wind(wind_values)
+
+        propagation_incendie.simulation_step(terrain, turn_count, rain, wind_direction)
+
