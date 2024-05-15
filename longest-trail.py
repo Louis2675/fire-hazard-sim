@@ -1,9 +1,10 @@
 import pygame
-import generation_terrain
-import propagation_incendie
+import terrain_generation
+import fire_propagation
+import simple_fire_propagation
 import random
-from parametres_terrain import TERRAIN_SIZE
-from parametres_incendie import P_RAIN, T_RAIN, P_WIND, T_WIND
+from terrain_parameters import TERRAIN_SIZE
+from fire_parameters import P_RAIN, T_RAIN, P_WIND, T_WIND
 
 def calculate_rain(rain, time_rain):
     """
@@ -79,13 +80,21 @@ def rotate_img(img, wind_direction):
 if __name__ == "__main__":
     # We start by initialising everything we need
 
-    terrain = generation_terrain.generate_terrain()
+    terrain = terrain_generation.generate_terrain() # This is the terrain on which everything happens
+    """
+    Other terrains that represents situations can be found at the end of the file
+    exemples : Plains, Dense forest, ...
+    """
     # initializing pygame
     pygame.font.init()
 
-#    pygame.font.get_init()
+    pygame.font.get_init()
 
-    # Our main variables
+    # To get the pygame fonts
+    font1 = pygame.font.SysFont('freesanbold.ttf', 50)
+
+    #________________________________________________________________________________________________________
+    # Defining our main variables
     size = 800 # Hight of the screen, width is 1.3 times the height
     marge = size//10 # The size of the sides of our simulation
     size_grid = size - marge # The size of our 
@@ -107,8 +116,8 @@ if __name__ == "__main__":
 
     thunder = False
 
-
-    font1 = pygame.font.SysFont('freesanbold.ttf', 50)
+    #________________________________________________________________________________________________________
+    # Defining the main grafical elements of our simulation (text and images)
 
     # Now we do the text boxes :
     
@@ -172,7 +181,7 @@ if __name__ == "__main__":
                     if x > marge//2 and x < size_grid + marge//2 and y > marge//2 and y < size_grid + marge//2:
                         x, y = (x- marge //2)//(size_grid//TERRAIN_SIZE), (y - marge // 2)//(size_grid//TERRAIN_SIZE)
                         coors = (y, x)
-                        propagation_incendie.set_fire(terrain, coors)
+                        fire_propagation.set_fire(terrain, coors)
             
             elif event.type == pygame.KEYDOWN:
                 
@@ -207,5 +216,6 @@ if __name__ == "__main__":
 
         wind_direction, time_wind = wind(wind_direction,wind_values,time_wind)
 
-        thunder = propagation_incendie.simulation_step(terrain, turn_count, rain, wind_direction)
+        thunder = fire_propagation.proba_simulation_step(terrain, turn_count, rain, wind_direction)
+#        thunder = simple_fire_propagation.simple_simulation_step(terrain, turn_count)
 

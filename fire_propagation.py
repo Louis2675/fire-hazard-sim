@@ -3,7 +3,7 @@ Fichier contenant les fonctions liées à la propagation de l'incendie
 """
 
 import random
-from parametres_incendie import S_FOREST, S_HOUSE, S_PLAIN, P_THUNDER, RAIN_INTENSITY, F_WIND
+from fire_parameters import S_FOREST, S_HOUSE, S_PLAIN, P_THUNDER, RAIN_INTENSITY, F_WIND
 
 def set_fire (terrain, coor):
     """
@@ -120,7 +120,6 @@ def calculate_propagation_chance(cell, cell2, rain, wind):
         return propa_chance + propa_wind
     return 0
 
-
 def cell_total_propagation_chance(terrain, cell, rain, wind):
     """
     Calculate the total propagation chance of a cell in a given terrain.
@@ -158,7 +157,6 @@ def cell_total_propagation_chance(terrain, cell, rain, wind):
                 
     return total_chance
 
-
 def will_cell_burn(terrain, cell, rain, wind):
     """
     Determines if a cell will burn based on its terrain type, rain, and wind conditions.
@@ -195,7 +193,7 @@ def propagate_fire(terrain, rain, wind):
             if will_cell_burn(terrain, terrain.grid[i][j], rain, wind):
                 terrain.grid[i][j].burning = True
 
-def simulation_step(terrain, turn_count, rain, wind):
+def proba_simulation_step(terrain, turn_count, rain, wind):
     """
     Perform a single step in the fire simulation.
 

@@ -1,6 +1,6 @@
 import random
 import copy
-from parametres_terrain import P_PLAIN, P_FOREST, P_HOUSE, TERRAIN_SIZE, P_WATER
+from terrain_parameters import P_PLAIN, P_FOREST, P_HOUSE, TERRAIN_SIZE, P_WATER
 from terrain import Terrain, Cell
 
 def cell_generator(terrain):
@@ -21,7 +21,7 @@ def cell_generator(terrain):
             # Assign a type to the cell based on the random number
             if alea < P_WATER:
                 terrain.grid[line][col].terrain_type = 'W'
-            elif alea < 0.42:
+            elif alea < P_PLAIN:
                 terrain.grid[line][col].terrain_type = 'P'
             else :
                 terrain.grid[line][col].terrain_type = 'F'
