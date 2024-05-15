@@ -3,7 +3,7 @@ Fichier contenant les fonctions liées à la propagation de l'incendie
 """
 
 import random
-from parametres_incendie import S_FOREST, S_HOUSE, S_PLAIN, P_THUNDER, RAIN_INTENSITY
+from parametres_incendie import S_FOREST, S_HOUSE, S_PLAIN, P_THUNDER, RAIN_INTENSITY, F_WIND
 
 def set_fire (terrain, coor):
     """
@@ -59,10 +59,9 @@ def thunder(turn_count, terrain):
                     cell_struck.fire_strength = S_HOUSE
                 
                 cell_struck.burning = True
-
-
-def wind():
-    pass
+    
+                return True
+    return False
 
 def calculate_distance_factor(cell1, cell2):
     coor1 = cell1.coors
@@ -80,33 +79,63 @@ def calculate_distance_factor(cell1, cell2):
         assert False, "Les cellules ne sont ni diagonales ni voisines."
 
 def calculate_propagation_chance(cell, cell2, rain, wind):
-    if cell.terrain_type == "F":
-        s_max = S_FOREST
-    elif cell.terrain_type == "H":
-        s_max = S_HOUSE
-    elif cell.terrain_type == "P":
-        s_max = S_PLAIN
-    dist = calculate_distance_factor(cell, cell2)
-    if cell2.burning == True :
+    if cell2.burning: # Makes the simuation faster because it doesn't do any calculations for cells that are not burning
+        
+        if cell.terrain_type == "F":
+            s_max = S_FOREST
+        elif cell.terrain_type == "H":
+            s_max = S_HOUSE
+        elif cell.terrain_type == "P":
+            s_max = S_PLAIN
+        dist = calculate_distance_factor(cell, cell2)
+        
         if cell2.terrain_type == "H" or cell2.terrain_type == "P":
             terrain_type_fact = 0.5
         elif cell2.terrain_type == "F":
             terrain_type_fact = 1
         else :
             terrain_type_fact = 0
-    else:
-        terrain_type_fact = 0
-    
-    if rain == True:
-        return dist * terrain_type_fact * (0.75) ** (s_max - cell2.fire_strength) * RAIN_INTENSITY
-    return dist * terrain_type_fact * (0.75) ** (s_max - cell2.fire_strength)
+        
+        propa_chance = dist * terrain_type_fact * (0.75) ** (s_max - cell2.fire_strength)
+
+        if wind != 'n':
+            if cell2.coors[0] > cell.coors[0] and wind == 'u':
+                propa_wind = propa_chance * F_WIND
+            elif cell2.coors[0] < cell.coors[0] and wind == 'd':
+                propa_wind = propa_chance * F_WIND
+            elif cell2.coors[1] > cell.coors[1] and wind == 'l':
+                propa_wind = propa_chance * F_WIND
+            elif cell2.coors[1] < cell.coors[1] and wind == 'r':
+                propa_wind = propa_chance * F_WIND
+            else :
+                propa_wind = 0
+        else :
+            propa_wind = 0 # If there is no wind, then there is no chance to propagate the fire faster
+        
+        if rain == True:
+            return propa_chance + propa_wind - propa_chance * RAIN_INTENSITY # We gat the chance of a propagation is P + P * w - P * r (propagation + (propagation times the force of the wind) - (propagation times the intensity of the rain))
+        return propa_chance + propa_wind
+    return 0
 
 def cell_total_propagation_chance(terrain, cell, rain, wind):
     total_chance = 0
     coor = cell.coors
-    
-    for i in range(max(0, coor[0] - 1), min(terrain.size, coor[0] + 2)):
-        for j in range(max(0, coor[1] - 1), min(terrain.size, coor[1] + 2)):
+
+    up, right, down, left = 0, 0, 0, 0
+
+    # If there is a direction to the wind, we add 1 to the directions, making the calculation skip the cells on the other side of the wind
+    if wind != 'n': # If the direction of the wind is not none
+        if wind == 'u':
+            up = 1
+        elif wind == 'r':
+            right = 1
+        elif wind == 'd':
+            down = 1
+        else :
+            left = 1
+
+    for i in range(max(0, coor[0] - 1) + up, min(terrain.size, coor[0] + 2) - down): 
+        for j in range(max(0, coor[1] - 1) + left, min(terrain.size, coor[1] + 2) - right):
             if i == coor[0] and j == coor[1]:
                 continue  # Skip the cell itself
             total_chance += calculate_propagation_chance(cell, terrain.grid[i][j], rain, wind)
@@ -130,5 +159,5 @@ def simulation_step(terrain, turn_count, rain, wind):
     for line in terrain.grid:
         for cell in line:
             update_fire(cell)
-    thunder(turn_count, terrain)
     propagate_fire(terrain, rain, wind)
+    return thunder(turn_count, terrain)
