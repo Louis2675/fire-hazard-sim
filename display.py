@@ -49,7 +49,6 @@ def wind (direction, values, time):
     else :
         return direction, time
 
-# Main function
 if __name__ == "__main__":
     # Generate the terrain
     terrain = generation_terrain.generate_terrain()
@@ -79,7 +78,22 @@ if __name__ == "__main__":
     wind_direction = wind_values[0]
     time_wind = 0
 
-    # Initialize the colors for the different rectangles
+    """
+
+    font1 = pygame.font.SysFont('freesanbold.ttf', 50)
+
+    # The title for the sim
+    text1 = font1.render('Welcome to the fire hazard simulator', True, (0, 0, 0))
+
+    # create a rectangular object for the title
+    textRect1 = text1.get_rect()
+
+    # setting center for the title
+    textRect1.center = (taille//2, 100)
+    """
+
+    # The colors for the different rectangles
+
     colorW = (21, 124, 214)
     colorP = (72, 232, 9)
     colorF = (44, 143, 6)
@@ -92,8 +106,12 @@ if __name__ == "__main__":
 
     # Main loop
     while running:
-        # Increase the turn count by 1
+        
+        """
+        """
         turn_count = turn_count + 1
+
+        textturn = font1.render(str(turn_count), True, (0, 0, 0))
 
         # Get the events
         events = pygame.event.get()
@@ -126,48 +144,39 @@ if __name__ == "__main__":
                 if event.key == pygame.K_ESCAPE:
                     running = False
         
-        # Fill the window with the background color
         window.fill((255,255,255))
 
-        # Display the grid by looking at the cell's type and showing a particular color for this type of cell
+        #    The grid is displayed by looking at the cell's type and showing a particular color for this type of cell
         for line in range (terrain.size):
             for col in range (terrain.size):
 
-                # If the cell's type is "C", draw a rectangle with the colorC
                 if terrain.grid[line][col].terrain_type == "C" :
                     pygame.draw.rect(window, colorC, pygame.Rect(marge//2 + col*(size_grid//terrain.size), marge//2 + line*(size_grid//terrain.size), size_grid//terrain.size, size_grid//terrain.size))
                 
-                # If the cell is burning, draw a rectangle with a color based on the fire strength
                 elif terrain.grid[line][col].burning == True:
                     pygame.draw.rect(window, (170 + (terrain.grid[line][col].fire_strength * 9), 10+ (terrain.grid[line][col].fire_strength * 10), 10+ (terrain.grid[line][col].fire_strength * 10)), pygame.Rect(marge//2 + col*(size_grid//terrain.size), marge//2 + line*(size_grid//terrain.size), size_grid//terrain.size, size_grid//terrain.size))
                 
-                # If the cell's type is 'F', draw a rectangle with the colorF
                 elif terrain.grid[line][col].terrain_type == 'F':
                     pygame.draw.rect(window, colorF, pygame.Rect(marge//2 + col*(size_grid//terrain.size), marge//2 + line*(size_grid//terrain.size), size_grid//terrain.size, size_grid//terrain.size))
                 
-                # If the cell's type is 'W', draw a rectangle with the colorW
                 elif terrain.grid[line][col].terrain_type == 'W':
                     pygame.draw.rect(window, colorW, pygame.Rect(marge//2 + col*(size_grid//terrain.size), marge//2 + line*(size_grid//terrain.size), size_grid//terrain.size, size_grid//terrain.size))
                 
-                # If the cell's type is 'P', draw a rectangle with the colorP
                 elif terrain.grid[line][col].terrain_type == 'P':
                     pygame.draw.rect(window, colorP, pygame.Rect(marge//2 + col*(size_grid//terrain.size), marge//2 + line*(size_grid//terrain.size), size_grid//terrain.size, size_grid//terrain.size))
                 
-                # If the cell's type is 'H', draw a rectangle with the colorH
                 elif terrain.grid[line][col].terrain_type == 'H':
                     pygame.draw.rect(window, colorH, pygame.Rect(marge//2 + col*(size_grid//terrain.size), marge//2 + line*(size_grid//terrain.size), size_grid//terrain.size, size_grid//terrain.size))
 
-        # Refresh the screen
-        pygame.display.flip() 
 
-        # Wait a bit until the next step
-        pygame.time.wait(100) 
 
-        # Calculate the state of rain and the time of rain
+        pygame.display.flip() # To refresh the screen
+
+        pygame.time.wait(100) # We wait a bit until the next step
+
         rain, time_rain = calculate_rain(rain, time_rain)
 
-        # Calculate the wind direction and the time of wind
         wind_direction, time_wind = wind(wind_values)
 
-        # Perform a simulation step
         propagation_incendie.simulation_step(terrain, turn_count, rain, wind_direction)
+
