@@ -4,7 +4,7 @@
 
 ### Launch Your Simulation
 
-Clone [this GitHub repository](https://github.com/Louis2675/longest-trail) on your computer (or download the files directly), then run the `longest-trail.py` file to start the test.
+Clone [this GitHub repository](https://github.com/Louis2675/fire-hasard-sim) on your computer (or download the files directly), then run the `main.py` file to start the test.
 
 ### Alternatives in Case of Issues with Running the Program
 
