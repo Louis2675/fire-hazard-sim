@@ -9,7 +9,6 @@ def set_fire (terrain, coor):
     """
     Function to put a cell whose coordinates we gave on fire
     """
-    print(coor[0], coor[1])
     if terrain.grid[coor[0]][coor[1]].terrain_type != 'W':
         terrain.grid[coor[0]][coor[1]].burning = True
 
@@ -23,12 +22,12 @@ def update_fire(cell):
         if cell.burning == True: # For all burning cells
             if cell.dying == True: # If the fire is dying
                 cell.fire_strength = cell.fire_strength - 1
-                if cell.fire_strength == 0: # If the fire is totally burnt
+                if cell.fire_strength <= 0: # If the fire is totally burnt
                     cell.terrain_type = "C" # The cell becomes charred
             else :# Now we increase the fire and check if the fire is dying
                 cell.fire_strength = cell.fire_strength + 1 # If the fire is not dying, it increases its strength
                 if cell.fire_strength >= S_PLAIN and cell.terrain_type == 'P':
-                    cell.burning = True
+                    cell.dying = True
                 elif cell.fire_strength >= S_FOREST and cell.terrain_type == 'F':
                     cell.dying = True
                 elif cell.fire_strength >= S_HOUSE and cell.terrain_type == 'H':
@@ -50,16 +49,17 @@ def thunder(turn_count, terrain):
                     if cell.burning != True and cell.terrain_type != "W" and cell.terrain_type != "C":
                         valid_cell_list.append(cell)
 
-            cell_struck = valid_cell_list[random.randint(0, len(valid_cell_list))] # the cell is struck at random
+            if len(valid_cell_list) > 0 :
+                cell_struck = valid_cell_list[random.randint(0, len(valid_cell_list))] # the cell is struck at random
             
-            if cell_struck.terrain_type == "P":
-                cell_struck.fire_strength = S_PLAIN
-            elif cell_struck.terrain_type == "F":
-                cell_struck.fire_strength = S_FOREST
-            elif cell_struck.terrain_type == "H":
-                cell_struck.fire_strength = S_HOUSE
-            
-            cell_struck.burning = True
+                if cell_struck.terrain_type == "P":
+                    cell_struck.fire_strength = S_PLAIN
+                elif cell_struck.terrain_type == "F":
+                    cell_struck.fire_strength = S_FOREST
+                elif cell_struck.terrain_type == "H":
+                    cell_struck.fire_strength = S_HOUSE
+                
+                cell_struck.burning = True
 
 
 def rain():
@@ -139,5 +139,3 @@ def simulation_step(terrain, turn_count):
             update_fire(cell)
     thunder(turn_count, terrain)
     propagate_fire(terrain)
-    turn_count = turn_count + 1
-    return turn_count

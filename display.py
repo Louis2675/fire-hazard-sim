@@ -57,17 +57,20 @@ if __name__ == "__main__":
         """
         turn_count = turn_count + 1
 
-        for event in pygame.event.get():  
+        events = pygame.event.get()
+
+        for event in events:
             if event.type == pygame.QUIT :  
                 running = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if pygame.mouse.get_pressed()[0]: # Left click
+                if event.button == 1: # Left click
                     x, y = event.pos
-                    print(x,y)
-                    if x > size and x < size_grid + marge and y > marge and y < size_grid + marge:
-                        print(x,y)
-                        propagation_incendie.set_fire(terrain, (x,y))
+                    
+                    if x > marge//2 and x < size_grid + marge//2 and y > marge//2 and y < size_grid + marge//2:
+                        x, y = (x- marge //2)//(size_grid//TERRAIN_SIZE), (y - marge // 2)//(size_grid//TERRAIN_SIZE)
+                        coors = (y, x)
+                        propagation_incendie.set_fire(terrain, coors)
             
             elif event.type == pygame.KEYDOWN:
                 
@@ -84,7 +87,7 @@ if __name__ == "__main__":
                     pygame.draw.rect(window, colorC, pygame.Rect(marge//2 + col*(size_grid//terrain.size), marge//2 + line*(size_grid//terrain.size), size_grid//terrain.size, size_grid//terrain.size))
                 
                 elif terrain.grid[line][col].burning == True:
-                    pygame.draw.rect(window, colorB, pygame.Rect(marge//2 + col*(size_grid//terrain.size), marge//2 + line*(size_grid//terrain.size), size_grid//terrain.size, size_grid//terrain.size))
+                    pygame.draw.rect(window, (170 + (terrain.grid[line][col].fire_strength * 9), 10+ (terrain.grid[line][col].fire_strength * 10), 10+ (terrain.grid[line][col].fire_strength * 10)), pygame.Rect(marge//2 + col*(size_grid//terrain.size), marge//2 + line*(size_grid//terrain.size), size_grid//terrain.size, size_grid//terrain.size))
                 
                 elif terrain.grid[line][col].terrain_type == 'F':
                     pygame.draw.rect(window, colorF, pygame.Rect(marge//2 + col*(size_grid//terrain.size), marge//2 + line*(size_grid//terrain.size), size_grid//terrain.size, size_grid//terrain.size))
@@ -102,7 +105,7 @@ if __name__ == "__main__":
 
         pygame.display.flip() # To refresh the screen
 
-        pygame.time.wait(500) # We wait a bit until the next step
+        pygame.time.wait(100) # We wait a bit until the next step
 
         propagation_incendie.simulation_step(terrain, turn_count)
     

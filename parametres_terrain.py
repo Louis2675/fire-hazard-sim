@@ -10,7 +10,7 @@ P_PLAIN = 0.6
 P_HOUSE = 0.02
 
 # Definition of the size of the grid representing the terrain (An entry of 100 would create a grid of 100x100).
-TERRAIN_SIZE = 100
+TERRAIN_SIZE = 120
 
 WATER_HEIGHT = 0
 
