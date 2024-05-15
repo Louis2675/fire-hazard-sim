@@ -40,6 +40,7 @@ python -u "<your directory>/main.py"
 ## External Resources Used
 
 <u>Libraries</u>
+
 `random`: This library allows us to introduce a certain randomness to generate simulation
 <br>
 
