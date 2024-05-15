@@ -181,7 +181,7 @@ def change_cell (terrain, copie, x, y):
                 else :
                     terrain.grid[x][y].terrain_type = 'F'
 
-def harmonization (terrain):
+def harmonization(terrain):
     """
     Harmonizes the terrain by changing the type of each cell based on its neighbors.
 
